@@ -28,20 +28,26 @@ try:
         windowed_data = data * window
         fft = np.abs(np.fft.fft(windowed_data).real)
         fft = fft[:int(len(fft)/2)]  # keep only the first half
-        
+
         # Smoothing factor
         alpha = 0.2
         smoothed_fft = alpha * smoothed_fft + (1 - alpha) * fft
-        
-        max_fft = np.max(smoothed_fft) if np.max(smoothed_fft) > 0 else 1  # Avoid division by zero
+
+        max_fft = (
+            np.max(smoothed_fft) if np.max(smoothed_fft)
+            > 0 else 1  # Avoid division by zero
+        )
 
         # Clear the screen
         os.system('cls' if os.name == 'nt' else 'clear')
 
         # Visualization logic
         bar_count = 75
-        indices = np.logspace(0, np.log10(len(smoothed_fft)), num=bar_count + 1, endpoint=True, base=10).astype(int) - 1
-        indices = np.unique(np.clip(indices, 0, len(smoothed_fft)-1))  # Ensure unique indices and within bounds
+        indices = np.logspace(0, np.log10(len(smoothed_fft)),
+                              num=bar_count + 1, endpoint=True,
+                              base=10).astype(int) - 1
+        # Ensure unique indices within bounds
+        indices = np.unique(np.clip(indices, 0, len(smoothed_fft)-1))
 
         for i in range(len(indices)-1):
             bar_values = smoothed_fft[indices[i]:indices[i+1]]
@@ -53,8 +59,11 @@ try:
                 bar_value = 0
 
             # Calculate the number of characters to print
-            num_chars = int(np.sqrt(bar_value / max_fft) * 50) if not np.isnan(bar_value) else 0
-            print('█' * num_chars)  # Normalize and apply sqrt to enhance visibility
+            num_chars = (int(np.sqrt(bar_value / max_fft) * 50)
+                         # Normalize and apply sqrt to enhance visibility
+                         if not np.isnan(bar_value) else 0
+                         )
+            print('█' * num_chars)
 
         time.sleep(0.07)  # control frame rate
 finally:
