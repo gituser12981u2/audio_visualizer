@@ -101,7 +101,7 @@ class AudioVisualizer:
             indices = np.logspace(0, np.log10(len(self.smoothed_fft)),
                                   num=self.bar_count + 1, endpoint=True,
                                   base=10).astype(int) - 1
-            # Ensure unique indices and within bounds
+            # Ensure unique indices within bounds
             indices = np.unique(np.clip(indices, 0, len(self.smoothed_fft)-1))
 
             for i in range(len(indices) - 1):
@@ -149,7 +149,7 @@ class AudioVisualizer:
                                           num=bar_count, endpoint=True,
                                           base=10).astype(int) - 1
             log_scale_index = np.unique(np.clip(log_scale_index, 0,
-                                                # unique indices in bounds
+                                                # unique indices within bounds
                                                 len(self.smoothed_fft)-1))
 
             for i in range(len(log_scale_index) - 1):
