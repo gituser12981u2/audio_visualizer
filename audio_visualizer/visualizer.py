@@ -87,8 +87,7 @@ class AudioVisualizer:
             os.system('cls' if os.name == 'nt' else 'clear')
 
             # Visualization logic
-            bar_count = 75
-            indices = np.logspace(0, np.log10(len(self.smoothed_fft)), num=bar_count + 1, endpoint=True, base=10).astype(int) - 1
+            indices = np.logspace(0, np.log10(len(self.smoothed_fft)), num=self.bar_count + 1, endpoint=True, base=10).astype(int) - 1
             indices = np.unique(np.clip(indices, 0, len(self.smoothed_fft)-1))  # Ensure unique indices and within bounds
 
             for i in range(len(indices) - 1):

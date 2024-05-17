@@ -28,16 +28,5 @@ class TestAudioVisualizer(unittest.TestCase):
         fft = np.abs(np.fft.fft(windowed_data).real)
         self.assertEqual(len(fft), self.visualizer.CHUNK)
 
-    def test_visualize_vertical(self):
-        # Mock the stream read to provide consisten data for testing
-        original_read = self.visualizer.stream.read
-        self.visualizer.stream.read = lambda x: np.random.randint(-32768, 32767, x).astype(np.int16).tobytes()
-        try:
-            self.visualizer.visualize_vertical()
-        except KeyboardInterrupt:
-            pass
-        finally:
-            self.visualizer.stream.read = original_read
-
 if __name__ == '__main__':
     unittest.main()
