@@ -114,4 +114,4 @@ This will allow for the program to render the audio that is being outputted on t
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
