@@ -1,5 +1,13 @@
 # Road map
 
+## Features
+
+### Reduce flickering on PowerShell and Command Prompt
+
+1. Add Double buffering
+
+2. Refresh only the updated parts
+
 ## Growth
 
 ### Make a pip installable
