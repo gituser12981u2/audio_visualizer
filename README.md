@@ -7,6 +7,7 @@ A simple, janky, yet charming terminal-based audio visualizer written in Python.
 - Visualize audio data in vertical or horizontal bar charts.
 - Adjustable parameters such as smoothing factor, buffer size, sampling rate, and number of bars.
 - Works on Linux, macOS, and Windows (with some additional setup on Windows).
+- Works best in VSC terminal (working on making it flicker less on powershell and command prompt)
 
 ## Installation
 
@@ -32,7 +33,7 @@ brew install portaudio
 
 #### Windows
 
-Download and install the PortAudio library from here
+Download and install the PortAudio library from [here](https://files.portaudio.com/download.html)
 
 ## Install the Python Package
 
