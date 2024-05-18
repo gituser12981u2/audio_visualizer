@@ -25,7 +25,7 @@ class AudioVisualizer:
         window (np.ndarray): Hamming window applied to audio data.
     """
 
-    def __init__(self, mode='vertical', alpha=0.2, chunk=2048, rate=44100,
+    def __init__(self, mode='vertical', alpha=0.4, chunk=2048, rate=44100,
                  bar_count=75):
         """Initializes the AudioVisualizer with given parameters.
 
