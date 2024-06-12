@@ -55,6 +55,7 @@ class AudioVisualizer:
         self.mode = mode
         self.alpha = alpha
         self.bar_count = bar_count
+        self.previous_frame = {}
         logging.basicConfig(level=logging.INFO)
 
     def start(self):
@@ -83,6 +84,7 @@ class AudioVisualizer:
             windowed_data = data * self.window
             fft = np.abs(np.fft.fft(windowed_data).real)
             fft = fft[:int(len(fft)/2)]  # keep only the first half
+
             # Smoothing factor
             self.smoothed_fft = (
                 self.alpha * self.smoothed_fft
@@ -94,8 +96,8 @@ class AudioVisualizer:
                 > 0 else 1  # Avoid division by zero
             )
 
-            # Clear the screen
-            os.system('cls' if os.name == 'nt' else 'clear')
+            # Double buffering
+            # buffer = []
 
             # Visualization logic
             indices = np.logspace(0, np.log10(len(self.smoothed_fft)),
@@ -104,6 +106,7 @@ class AudioVisualizer:
             # Ensure unique indices within bounds
             indices = np.unique(np.clip(indices, 0, len(self.smoothed_fft)-1))
 
+            current_frame = {}
             for i in range(len(indices) - 1):
                 bar_values = self.smoothed_fft[indices[i]:indices[i+1]]
                 if bar_values.size > 0:
@@ -118,9 +121,24 @@ class AudioVisualizer:
                              # Normalize and apply sqrt to enhance visibility
                              if not np.isnan(bar_value) else 0
                              )
-                print('█' * num_chars)
+                for j in range(num_chars):
+                    current_frame[(i, j)] = '█'
+                for j in range(num_chars, 50):
+                    current_frame[(i, j)] = ' '
 
-            time.sleep(0.07)  # control frame rate
+            # Update only the changed parts
+            for key in current_frame:
+                if key not in self.previous_frame or self.previous_frame[key] != current_frame[key]:  # noqa: E501
+                    x, y = key
+                    print(f"\033[{y + 1};{x + 1}H{current_frame[key]}", end="")
+
+            self.previous_frame = current_frame
+
+            # Clear the screen and write the buffer
+            # os.system('cls' if os.name == 'nt' else 'clear')
+            # print("\n".join(buffer))
+
+            time.sleep(0.1)  # control frame rate
 
     def visualize_horizontal(self):
         """Visualizes audio data in a horizontal bar chart
@@ -171,7 +189,7 @@ class AudioVisualizer:
             os.system('cls' if os.name == 'nt' else 'clear')
             print(frame_buffer, end="", flush=True)
 
-            time.sleep(0.07)  # control frame rate
+            time.sleep(0.1)  # control frame rate
 
     def cleanup(self):
         """Stops the audio stream and terminates PyAudio."""
