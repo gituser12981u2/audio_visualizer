@@ -37,25 +37,42 @@ class AudioVisualizer:
             bar_count (int): Number of bars in the visualization.
         """
         self.FORMAT = pyaudio.paInt16
-        self.CHANNELS = 1
+        self.CHANNELS = 2
         self.RATE = rate
         self.CHUNK = chunk
         self.audio = pyaudio.PyAudio()
         self.stream = None
+
+        # List available audio devices
+        self.device_index = None
+        for i in range(self.audio.get_device_count()):
+            info = self.audio.get_device_info_by_index(i)
+            # print(f"Device {i}: {info['name']}")
+            if 'BlackHole 2ch' in info['name']:
+                self.device_index = i
+                # print(f"Selected Device {i}: {info['name']}")
+                # print(f"Device {i} Max Input Channels: {info['maxInputChannels']}")
+                # print(f"Device {i} Max Output Channels: {info['maxOutputChannels']}")
+        
+        if self.device_index is None:
+            raise ValueError("BlackHole 2ch device not found")
+
         try:
             self.stream = self.audio.open(format=self.FORMAT,
                                           channels=self.CHANNELS,
                                           rate=self.RATE,
                                           input=True,
+                                          input_device_index=self.device_index,
                                           frames_per_buffer=self.CHUNK)
         except Exception as e:
             logging.error(f"Failed to open stream: {e}")
+        
         self.smoothed_fft = np.zeros(self.CHUNK // 2)
         self.window = np.hamming(self.CHUNK)
         self.mode = mode
         self.alpha = alpha
         self.bar_count = bar_count
-        self.previous_frame = {}
+        self.previous_frame = None
         logging.basicConfig(level=logging.INFO)
 
     def start(self):
@@ -63,6 +80,10 @@ class AudioVisualizer:
         Continuously reads audio data from the stream and updates the terminal
         visualization until interrupted.
         """
+        if self.stream is None:
+            logging.error("Stream is not open. Exiting.")
+            return
+
         try:
             if self.mode == 'vertical':
                 self.visualize_vertical()
@@ -79,7 +100,13 @@ class AudioVisualizer:
         """Visualizes audio data in a vertical bar chart
         --from left to right."""
         while True:
-            data = np.frombuffer(self.stream.read(self.CHUNK), dtype=np.int16)
+            try:
+                data = np.frombuffer(self.stream.read(self.CHUNK, exception_on_overflow=False), dtype=np.int16)
+                data = data.reshape(-1, 2).mean(axis=1) # Average the two channels
+            except IOError as e:
+                logging.warning(f"Input overflowed: {e}")
+                continue
+
             # Apply window function
             windowed_data = data * self.window
             fft = np.abs(np.fft.fft(windowed_data).real)
@@ -125,19 +152,18 @@ class AudioVisualizer:
                     current_frame[(i, j)] = '█'
                 for j in range(num_chars, 50):
                     current_frame[(i, j)] = ' '
+            
+            # Update the terminal once per frame
+            frame_buffer = []
+            for y in range(50):
+                line = ''.join(current_frame.get((x, y), ' ') for x in range(self.bar_count))
+                frame_buffer.append(line)
 
-            # Update only the changed parts
-            for key in current_frame:
-                if key not in self.previous_frame or self.previous_frame[key] != current_frame[key]:  # noqa: E501
-                    x, y = key
-                    print(f"\033[{y + 1};{x + 1}H{current_frame[key]}", end="")
+            # Clear the screen and print the frame buffer
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print('\n'.join(frame_buffer), end="", flush=True)
 
             self.previous_frame = current_frame
-
-            # Clear the screen and write the buffer
-            # os.system('cls' if os.name == 'nt' else 'clear')
-            # print("\n".join(buffer))
-
             time.sleep(0.1)  # control frame rate
 
     def visualize_horizontal(self):
@@ -152,8 +178,14 @@ class AudioVisualizer:
         bar_heights = np.zeros(bar_count, dtype=int)
 
         while True:
+            try:
             # Get the audio data and apply the FFT
-            data = np.frombuffer(self.stream.read(self.CHUNK), dtype=np.int16)
+                data = np.frombuffer(self.stream.read(self.CHUNK), dtype=np.int16)
+                data = data.reshape(-1, 2).mean(axis=1)  # Average the two channels
+            except IOError as e:
+                logging.warning(f"Input overflowed: {e}")
+                continue
+            
             fft = np.abs(np.fft.fft(
                 data * np.hamming(self.CHUNK)).real)[:self.CHUNK // 2]
 
@@ -181,7 +213,7 @@ class AudioVisualizer:
 
                 bar_heights[i] = bar_height
 
-            # Clear the frame buffer
+            # Update the terminal once per frame
             frame_buffer = "\n".join("".join("█" if bar_heights[col] >= row else " "  # noqa: E501
                                              for col in range(bar_count - 1)) for row in range(max_bar_height - 1, -1, -1))  # noqa: E501
 
@@ -193,6 +225,7 @@ class AudioVisualizer:
 
     def cleanup(self):
         """Stops the audio stream and terminates PyAudio."""
-        self.stream.stop_stream()
-        self.stream.close()
+        if self.stream is not None:
+            self.stream.stop_stream()
+            self.stream.close()
         self.audio.terminate()
