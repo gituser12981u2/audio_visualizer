@@ -4,7 +4,15 @@ setup(
     name="audio_visualizer",
     version="0.1.0",
     packages=find_packages(),
-    install_requires=["numpy", "pyaudio"],
+    install_requires=[
+        "numpy",
+        "pyaudio",
+        "autopep8",
+        "flake8",
+        "mccabe",
+        "pycodestyle",
+        "pyflakes"
+    ],
     entry_points={
         "console_scripts": ["audio-visualizer=audio_visualizer.__init__:main"]
     },

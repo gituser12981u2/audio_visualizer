@@ -6,15 +6,14 @@ A simple, janky, yet charming terminal-based audio visualizer written in Python.
 
 - Visualize audio data in vertical or horizontal bar charts.
 - Adjustable parameters such as smoothing factor, buffer size, sampling rate, and number of bars.
-- Works on Linux, macOS, and Windows (with some additional setup on Windows).
-- Works best in VSC terminal (working on making it flicker less on powershell and command prompt)
+- Works on Linux, macOS, and Windows.
+- Works best in VSC terminal, iterm2, kitty, and alacritty.
 
 ## Installation
 
 ### Prerequisites
 
 - Python 3.6 or later
-- PortAudio library (for PyAudio)
 
 ### Install the PortAudio Library
 
@@ -27,9 +26,15 @@ sudo apt-get install -y portaudio19-dev
 
 #### macOS
 
+Setup a loopback device.
+
 ```bash
-brew install portaudio
+brew install blackhole-2ch
 ```
+
+1. Open the "Audio MIDI Setup" app.
+2. Create an "Aggregate Device" with the default input device and "BlackHole 2ch".
+3. Set this Aggregate Device as the input device
 
 #### Windows
 
@@ -46,7 +51,7 @@ Download and install the PortAudio library from [here](https://files.portaudio.c
 2. Set up a virtual environment:
 
     ```bash
-    python -m venv .venv
+    python3 -m venv .venv
     source .venv/bin/activate  # On Windows, use '.venv\Scripts\activate'
     ```
 
@@ -111,6 +116,51 @@ This will allow for the program to render the audio that is being outputted on t
 3. Commit your changes(`git commit -am 'Add new feature'`)
 4. Push to the branch(`git push origin feature-branch`)..
 5. Create a new Pull Request.
+
+### Linting and Formatting
+
+Please ensure that any updates adhere to the project's style guidelines before committing.
+
+- Run flake8 to check for linting issues:
+```bash
+flake8 audio_visualizer tests audio_capture.py horizontal_visualizer.py vertical_visualizer.py visualizer.py
+```
+
+- Run autopep8 to format the code to flake8 standards
+    - Note that autopep8 doesn't work 100% so some manual formatting may be necessary
+
+```bash
+autopep8 --in-place --aggressive --aggressive audio_visualizer tests audio_capture.py horizontal_visualizer.py vertical_visualizer.py visualizer.py
+```
+
+One can also set up a pre-commit hook to automate these checks:
+
+1. Install pre-commit:
+```bash
+pip install pre-commit
+```
+
+2. Create a .pre-commit-config.yaml file with the following content:
+```yaml
+repos:
+  - repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v1.5.7
+    hooks:
+      - id: autopep8
+        args: [--aggressive, --aggressive]
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
+      - id: flake8
+```
+
+3. Install the pre-commit hooks:
+```bash
+pre-commit install
+```
+
+This will ensure that autopep8 and flake8 run automatically before each commit.
 
 ## License
 
