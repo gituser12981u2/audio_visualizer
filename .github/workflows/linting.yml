@@ -21,11 +21,11 @@ jobs:
               with:
                 python-version: '3.x'
             
-            - name: Install depenencies
+            - name: Install dependencies
               run: |
                 python -m pip install --upgrade pip
                 pip install flake8
             
             - name: Run flake8
               run: |
-                    flake8 audio_visualizer tests
+                    flake8 audio_visualizer tests audio_capture.py horizontal_visualizer.py vertical_visualizer.py visualizer.py

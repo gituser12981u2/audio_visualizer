@@ -2,11 +2,8 @@
 
 ## Features
 
-### Reduce flickering on PowerShell and Command Prompt
-
-1. Add Double buffering
-
-2. Refresh only the updated parts
+1. Extend horizontal and vertical to be the whole terminal length
+2. Profile code and optimize
 
 ## Growth
 
@@ -19,3 +16,9 @@
 1. Package application
 2. Make manifest
 3. push to winget
+
+### Put on homebrew
+
+### Put on pacman
+
+### Put on apt
