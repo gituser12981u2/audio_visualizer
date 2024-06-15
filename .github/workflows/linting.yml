@@ -28,4 +28,4 @@ jobs:
             
             - name: Run flake8
               run: |
-                    flake8 audio_visualizer tests audio_capture.py horizontal_visualizer.py vertical_visualizer.py visualizer.py
+                    flake8 audio_visualizer tests
