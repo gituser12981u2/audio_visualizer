@@ -5,12 +5,15 @@ This module initializes the audio visualizer
 and starts the visualization process.
 """
 
+from audio_visualizer.vertical_visualizer import visualize_vertical
 import numpy as np
 import logging
 
 from audio_visualizer.audio_capture import AudioCapture
-from audio_visualizer.horizontal_visualizer import visualize_horizontal
-from audio_visualizer.vertical_visualizer import visualize_vertical
+from audio_visualizer.horizontal_left_to_right_visualizer import (
+    visualize_horizontal_left_to_right)
+from audio_visualizer.horizontal_right_to_left_visualizer import (
+    visualize_horizontal_right_to_left)
 
 
 class AudioVisualizer:
@@ -53,14 +56,23 @@ class AudioVisualizer:
             return
 
         try:
+            # Vertical bars that start from the bottom and go to the top
             if self.mode == 'vertical':
                 visualize_vertical(self.stream, self.chunk, self.rate,
                                    self.alpha, self.bar_count, self.window,
                                    self.smoothed_fft)
-            elif self.mode == 'horizontal':
-                visualize_horizontal(self.stream, self.chunk, self.rate,
-                                     self.alpha, self.bar_count, self.window,
-                                     self.smoothed_fft)
+            # Horizontal bars that start from the left and go to the right
+            elif self.mode == 'horizontal-ltr':
+                visualize_horizontal_left_to_right(self.stream, self.chunk,
+                                                   self.rate, self.alpha,
+                                                   self.bar_count, self.window,
+                                                   self.smoothed_fft)
+            # Horizontal bars that start from the right and go to the left
+            elif self.mode == 'horizontal-rtl':
+                visualize_horizontal_right_to_left(self.stream, self.chunk,
+                                                   self.rate, self.alpha,
+                                                   self.bar_count, self.window,
+                                                   self.smoothed_fft)
         except KeyboardInterrupt:
             logging.info("Visualization stopped by user.")
         except Exception as e:
