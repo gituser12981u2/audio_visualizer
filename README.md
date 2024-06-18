@@ -81,8 +81,10 @@ audio-visualizer --mode vertical
 Or to run in horizontal mode:
 
 ```bash
-audio-visualizer --mode horizontal
+audio-visualizer --mode horizontal-ltr
 ```
+
+Note: there are two horizontal modes. One that draws bars from left to right (ltr) and one that draws bars from right to left (rtl)
 
 ### Command Line Options
 
@@ -95,7 +97,7 @@ audio-visualizer --mode horizontal
 Example:
 
 ```bash
-audio-visualizer --mode horizontal --alpha 0.3 --chunk 1024 --rate 48000 -bar_count 100
+audio-visualizer --mode horizontal-rtl --alpha 0.3 --chunk 1024 --rate 48000 -bar_count 100
 ```
 
 ## Windows Specific Instructions
