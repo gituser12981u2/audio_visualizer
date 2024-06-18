@@ -11,7 +11,7 @@ def main():
     parser = argparse.ArgumentParser(description="Terminal Audio Visualizer")
     parser.add_argument(
         "--mode",
-        choices=["vertical", "horizontal"],
+        choices=["vertical", "horizontal-ltr", "horizontal-rtl"],
         default="vertical",
         help="Choose visualization mode: vertical or horizontal",
     )
