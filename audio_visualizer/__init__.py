@@ -1,12 +1,18 @@
 from audio_visualizer.visualizer import AudioVisualizer
+import argparse
 import logging
+import time
 
-logging.basicConfig(level=logging.DEBUG)
+# Configure logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    handlers=[
+                        logging.FileHandler("debug.log"),
+                    ])
 
 
 def main():
     """Entry point for the audio visualizer command line interface."""
-    import argparse
 
     parser = argparse.ArgumentParser(description="Terminal Audio Visualizer")
     parser.add_argument(
@@ -33,12 +39,6 @@ def main():
         default=44100,
         help="Sampling rate; default is 44100",
     )
-    parser.add_argument(
-        "--bar_count",
-        type=int,
-        default=75,
-        help="Number of bars in the visualization; default is 75",
-    )
     args = parser.parse_args()
 
     visualizer = AudioVisualizer(
@@ -46,9 +46,15 @@ def main():
         alpha=args.alpha,
         chunk=args.chunk,
         rate=args.rate,
-        bar_count=args.bar_count,
     )
     visualizer.start()
+
+    try:
+        while True:
+            time.sleep(1)  # Keep the main thread active
+    except KeyboardInterrupt:
+        visualizer.stop()
+        print("Visualization stopped by user")
 
 
 if __name__ == '__main__':

@@ -21,6 +21,8 @@ A simple, janky, yet charming terminal-based audio visualizer written in Python.
 
 ```bash
 sudo apt-get update
+```
+```bash
 sudo apt-get install -y portaudio19-dev
 ```
 
@@ -52,13 +54,18 @@ Download and install the PortAudio library from [here](https://files.portaudio.c
 
     ```bash
     python3 -m venv .venv
-    source .venv/bin/activate  # On Windows, use '.venv\Scripts\activate'
+    ```
+    ```bash
+    source .venv/bin/activate  
+    # On Windows, use '.venv\Scripts\activate'
     ```
 
 3. Install the dependencies:
 
     ```bash
     pip install -r requirements.txt
+    ```
+    ```bash
     pip install .
     ```
 
@@ -84,20 +91,29 @@ Or to run in horizontal mode:
 audio-visualizer --mode horizontal-ltr
 ```
 
-Note: there are two horizontal modes. One that draws bars from left to right (ltr) and one that draws bars from right to left (rtl)
+**Note**: there are two horizontal modes. One that draws bars from left to right (ltr) and one that draws bars from right to left (rtl)
+
+### Hotkey mode switcher
+
+Switch to a different view--mode--while already in a visualization.
+
+While running a mode, press **'ctrl+l'** to switch to horizontal ltr mode, **'ctrl+r'** to switch to horizontal rtl mode, or **'ctrl+v'** to switch to vertical mode.
+
+-'ctrl+l': horizontal ltr mode
+-'ctrl+r': horizontal rtl mode
+-'ctrl+v': vertical mode
 
 ### Command Line Options
 
 - `--mode`: Visualization mode('vertical or horizontal). Default is `vertical`. That is if you put no `--mode` option.
-- `--alpha`: Smoothing factor for FFT. Default is `0.2`.
+- `--alpha`: Smoothing factor for FFT. Default is `0.4`.
 - `--chunk`: Number of frames per buffer. Default is `2048`.
 - `--rate`: Sampling rate Default is `44100`.
-- `--bar_count`: Number of bars in the visualization. Default is `75`.
 
 Example:
 
 ```bash
-audio-visualizer --mode horizontal-rtl --alpha 0.3 --chunk 1024 --rate 48000 -bar_count 100
+audio-visualizer --mode horizontal-rtl --alpha 0.3 --chunk 1024 --rate 48000
 ```
 
 ## Windows Specific Instructions
@@ -167,3 +183,8 @@ This will ensure that autopep8 and flake8 run automatically before each commit.
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contributors
+Thank you to the follow people for their contributions to this project:
+
+-[@ohksith](https://github.com/ohksith) - Provided fix for the terminal to clean it self after visualization stopped

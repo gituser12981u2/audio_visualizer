@@ -8,6 +8,7 @@ and horizontal_right_to_left_visualizer modules.
 import unittest
 from unittest.mock import MagicMock, patch
 import numpy as np
+from threading import Event
 import io
 
 from audio_visualizer.vertical_visualizer import visualize_vertical
@@ -18,6 +19,10 @@ from audio_visualizer.horizontal_right_to_left_visualizer import (
 
 
 class TestVisualizes(unittest.TestCase):
+    def setUp(self):
+        # Create a mock stop event
+        self.mock_stop_event = MagicMock(spec=Event)
+        self.mock_stop_event.is_set.return_value = False
     """
     Test cases for visualization functions.
     """
@@ -56,7 +61,6 @@ class TestVisualizes(unittest.TestCase):
         # Parameters for the visualizer
         rate = 44100
         alpha = 0.5
-        bar_count = 50
         window = np.hanning(chunk)
         smoothed_fft = np.zeros(chunk // 2)
 
@@ -64,7 +68,8 @@ class TestVisualizes(unittest.TestCase):
         with patch('sys.stdout', new=io.StringIO()) as fake_stdout:
             try:
                 visualize_vertical(mock_stream, chunk, rate,
-                                   alpha, bar_count, window, smoothed_fft)
+                                   alpha, window, smoothed_fft,
+                                   self.mock_stop_event)
             except StopIteration:
                 pass  # Handle StopIteration gracefully in test
 
@@ -109,7 +114,6 @@ class TestVisualizes(unittest.TestCase):
         # Parameters for the visualizer
         rate = 44100
         alpha = 0.5
-        bar_count = 50
         window = np.hanning(chunk)
         smoothed_fft = np.zeros(chunk // 2)
 
@@ -118,7 +122,7 @@ class TestVisualizes(unittest.TestCase):
             try:
                 visualize_horizontal_left_to_right(
                     mock_stream, chunk, rate, alpha,
-                    bar_count, window, smoothed_fft)
+                    window, smoothed_fft, self.mock_stop_event)
             except StopIteration:
                 pass  # Handle StopIteration gracefully in test
 
@@ -163,7 +167,6 @@ class TestVisualizes(unittest.TestCase):
         # Parameters for the visualizer
         rate = 44100
         alpha = 0.5
-        bar_count = 50
         window = np.hanning(chunk)
         smoothed_fft = np.zeros(chunk // 2)
 
@@ -172,7 +175,7 @@ class TestVisualizes(unittest.TestCase):
             try:
                 visualize_horizontal_right_to_left(
                     mock_stream, chunk, rate, alpha,
-                    bar_count, window, smoothed_fft)
+                    window, smoothed_fft, self.mock_stop_event)
             except StopIteration:
                 pass  # Handle StopIteration gracefully in test
 
