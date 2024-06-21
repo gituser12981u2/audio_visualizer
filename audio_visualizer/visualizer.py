@@ -1,87 +1,114 @@
-"""
-visualizer.py
-
-This module initializes the audio visualizer
-and starts the visualization process.
-"""
-
-from audio_visualizer.vertical_visualizer import visualize_vertical
 import numpy as np
 import logging
+import os
+from pynput import keyboard
+from threading import Thread, Event
 
 from audio_visualizer.audio_capture import AudioCapture
+from audio_visualizer.vertical_visualizer import visualize_vertical
 from audio_visualizer.horizontal_left_to_right_visualizer import (
     visualize_horizontal_left_to_right)
 from audio_visualizer.horizontal_right_to_left_visualizer import (
     visualize_horizontal_right_to_left)
-import os
+
+
+def clear_screen():
+    """Clears the console screen."""
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
+def get_visualization_function(mode):
+    if mode == 'vertical':
+        return visualize_vertical
+    elif mode == 'horizontal-ltr':
+        return visualize_horizontal_left_to_right
+    elif mode == 'horizontal-rtl':
+        return visualize_horizontal_right_to_left
+    else:
+        raise ValueError("Unsupported visualization mode: {mode}")
+
 
 class AudioVisualizer:
-    """Audio Visualizer for terminal.
+    """Class to manage audio visualization."""
 
-    This class handles the visualization of audio data in the terminal using
-    either a vertical or horizontal bar chart
-
-    Attributes:
-        mode (str): Visualization mode ('vertical' or 'horizontal').
-        alpha (float): Smoothing factor for FFT.
-        chunk (int): Number of frames per buffer.
-        rate (int): Sampling rate.
-        bar_count (int): Number of bars in the visualization.
-        window (np.ndarray): Hamming window applied to audio data.
-        smoothed_fft (np.ndarray): Smoothed FFT result.
-        stream (AudioCapture): Audio capture object.
-    """
-
-    def __init__(self, mode='vertical', alpha=0.4, chunk=2048, rate=44100,
-                 bar_count=75):
+    def __init__(self, mode='vertical', alpha=0.4, chunk=2048, rate=44100):
         self.mode = mode
         self.alpha = alpha
         self.chunk = chunk
         self.rate = rate
-        self.bar_count = bar_count
-        self.window = np.hamming(self.chunk)
-        self.smoothed_fft = np.zeros(self.chunk // 2)
         self.stream = AudioCapture(
             chunk=self.chunk, rate=self.rate, channels=2)
         self.stream.start_stream()
+        self.thread = None
+        self.stop_event = Event()
+        self.setup_hotkeys()
+        logging.info("Audio Visualizer initialized")
+
+    def setup_hotkeys(self):
+        """
+        Sets up the keyboard listener
+        for hotkeys to change visualization modes.
+        """
+        listener = keyboard.Listener(on_press=self.on_key_press)
+        listener.start()
+        logging.info("Keyboard listener started")
+
+    def on_key_press(self, key):
+        # Check if the 'Ctrl' key is pressed
+        if isinstance(key, keyboard.Key):
+            if key == keyboard.Key.ctrl_l or key == keyboard.Key.ctrl_r:
+                self.ctrl_pressed = True
+
+        # Check for the specific character keys while 'Ctrl' is pressed
+        if isinstance(key, keyboard.KeyCode):
+            char = key.char
+            if self.ctrl_pressed and char in ['v', 'l', 'r']:
+                new_mode = {'v': 'vertical', 'l': 'horizontal-ltr',
+                            'r': 'horizontal-rtl'}.get(char)
+                if new_mode and new_mode != self.mode:
+                    self.change_mode(new_mode)
+
+    def on_key_release(self, key):
+        # Check if the 'Ctrl' key is released
+        if key == keyboard.Key.ctrl_l or key == keyboard.Key.ctrl_r:
+            self.ctrl_pressed = False
+
+    def change_mode(self, new_mode):
+        """Change the mode of the visualizer and restart visualization"""
+        logging.debug(f"Attempting to change mode from {
+                      self.mode} to {new_mode}")
+        self.mode = new_mode
+        self.restart_visualization()
+
+    def restart_visualization(self):
+        """Restart the visualization when the mode is changed."""
+        if self.thread is not None and self.thread.is_alive():
+            self.stop_event.set()
+            self.thread.join()
+            self.stop_event.clear()
+            logging.info("Visualization thread stopped and restarted.")
+        self.thread = Thread(target=self.run_visualization)
+        self.thread.start()
+
+    def run_visualization(self):
+        """Run the visualization in a separate thread to keep UI responsive."""
+        try:
+            visualize = get_visualization_function(self.mode)
+            visualize(self.stream, self.chunk, self.rate, self.alpha,
+                      np.hamming(self.chunk), np.zeros(self.chunk // 2),
+                      self.stop_event)
+        except Exception as e:
+            logging.error(f"Error during visualization: {e}")
 
     def start(self):
-        """Starts the audio visualization process.
-        Continuously reads audio data from the stream and updates the terminal
-        visualization until interrupted.
-        """
-        if self.stream is None:
-            logging.error("Stream is not open. Exiting.")
-            return
+        """Start the initial visualization."""
+        logging.info("Starting visualization.")
+        self.restart_visualization()
 
-        try:
-            # Vertical bars that start from the bottom and go to the top
-            if self.mode == 'vertical':
-                visualize_vertical(self.stream, self.chunk, self.rate,
-                                   self.alpha, self.bar_count, self.window,
-                                   self.smoothed_fft)
-            # Horizontal bars that start from the left and go to the right
-            elif self.mode == 'horizontal-ltr':
-                visualize_horizontal_left_to_right(self.stream, self.chunk,
-                                                   self.rate, self.alpha,
-                                                   self.bar_count, self.window,
-                                                   self.smoothed_fft)
-            # Horizontal bars that start from the right and go to the left
-            elif self.mode == 'horizontal-rtl':
-                visualize_horizontal_right_to_left(self.stream, self.chunk,
-                                                   self.rate, self.alpha,
-                                                   self.bar_count, self.window,
-                                                   self.smoothed_fft)
-        except KeyboardInterrupt:
-            # Terminal cleared using cls/ clear. Print statement processed after clearing terminal.
-            if os.name == 'nt':
-                os.system('cls')
-                print('Visualization stopped by user.')
-            else:
-                os.system('clear')
-                print('Visualization stopped by user.')
-        except Exception as e:
-            logging.error(f"An error occurred: {e}")
-        finally:
-            self.stream.stop_stream()
+    def stop(self):
+        """Stop the visualization gracefully."""
+        if self.thread and self.thread.is_alive():
+            self.stop_event.set()
+            self.thread.join()
+        clear_screen()
+        logging.info("Visualization stopped.")

@@ -5,27 +5,38 @@ Unit tests for vertical_visualizer, horizontal_left_to_right_visualizer,
 and horizontal_right_to_left_visualizer modules.
 """
 
-import unittest
-from unittest.mock import MagicMock, patch
-import numpy as np
-import io
-
-from audio_visualizer.vertical_visualizer import visualize_vertical
-from audio_visualizer.horizontal_left_to_right_visualizer import (
-    visualize_horizontal_left_to_right)
 from audio_visualizer.horizontal_right_to_left_visualizer import (
     visualize_horizontal_right_to_left)
+from audio_visualizer.horizontal_left_to_right_visualizer import (
+    visualize_horizontal_left_to_right)
+from audio_visualizer.vertical_visualizer import visualize_vertical
+import unittest
+import sys
+from unittest.mock import MagicMock, patch
+import numpy as np
+from threading import Event
+import io
+
+sys.modules['pynput'] = MagicMock()
+sys.modules['pynput.keyboard'] = MagicMock()
 
 
+@patch('audio_visualizer.vertical_visualizer.os.get_terminal_size')
+# Mock os.system to prevent clearing the screen
+@patch('audio_visualizer.vertical_visualizer.os.system')
+# Mock time.sleep to speed up the test
+@patch('audio_visualizer.vertical_visualizer.time.sleep')
+# Mock entire pynput module
+@patch('audio_visualizer.visualizer.keyboard', MagicMock())
 class TestVisualizes(unittest.TestCase):
+    def setUp(self):
+        # Create a mock stop event
+        self.mock_stop_event = MagicMock(spec=Event)
+        self.mock_stop_event.is_set.return_value = False
     """
     Test cases for visualization functions.
     """
-    @patch('audio_visualizer.vertical_visualizer.os.get_terminal_size')
-    # Mock os.system to prevent clearing the screen
-    @patch('audio_visualizer.vertical_visualizer.os.system')
-    # Mock time.sleep to speed up the test
-    @patch('audio_visualizer.vertical_visualizer.time.sleep')
+
     def test_visualize_vertical(self, mock_sleep,
                                 mock_os_system, mock_get_terminal_size):
         """
@@ -56,7 +67,6 @@ class TestVisualizes(unittest.TestCase):
         # Parameters for the visualizer
         rate = 44100
         alpha = 0.5
-        bar_count = 50
         window = np.hanning(chunk)
         smoothed_fft = np.zeros(chunk // 2)
 
@@ -64,7 +74,8 @@ class TestVisualizes(unittest.TestCase):
         with patch('sys.stdout', new=io.StringIO()) as fake_stdout:
             try:
                 visualize_vertical(mock_stream, chunk, rate,
-                                   alpha, bar_count, window, smoothed_fft)
+                                   alpha, window, smoothed_fft,
+                                   self.mock_stop_event)
             except StopIteration:
                 pass  # Handle StopIteration gracefully in test
 
@@ -73,11 +84,6 @@ class TestVisualizes(unittest.TestCase):
         self.assertIn('█', output)
         self.assertGreater(len(output), 0)  # Check that there is some output
 
-    @patch('audio_visualizer.horizontal_left_to_right_visualizer.os.get_terminal_size')  # noqa: E501
-    # Mock os.system to prevent clearing the screen
-    @patch('audio_visualizer.horizontal_left_to_right_visualizer.os.system')
-    # Mock time.sleep to speed up the test
-    @patch('audio_visualizer.horizontal_left_to_right_visualizer.time.sleep')
     def test_visualize_horizontal_left_to_right(self, mock_sleep,
                                                 mock_os_system,
                                                 mock_get_terminal_size):
@@ -109,7 +115,6 @@ class TestVisualizes(unittest.TestCase):
         # Parameters for the visualizer
         rate = 44100
         alpha = 0.5
-        bar_count = 50
         window = np.hanning(chunk)
         smoothed_fft = np.zeros(chunk // 2)
 
@@ -118,7 +123,7 @@ class TestVisualizes(unittest.TestCase):
             try:
                 visualize_horizontal_left_to_right(
                     mock_stream, chunk, rate, alpha,
-                    bar_count, window, smoothed_fft)
+                    window, smoothed_fft, self.mock_stop_event)
             except StopIteration:
                 pass  # Handle StopIteration gracefully in test
 
@@ -127,11 +132,6 @@ class TestVisualizes(unittest.TestCase):
         self.assertIn('█', output)
         self.assertGreater(len(output), 0)  # Check that there is some output
 
-    @patch('audio_visualizer.horizontal_right_to_left_visualizer.os.get_terminal_size')  # noqa: E501
-    # Mock os.system to prevent clearing the screen
-    @patch('audio_visualizer.horizontal_right_to_left_visualizer.os.system')
-    # Mock time.sleep to speed up the test
-    @patch('audio_visualizer.horizontal_right_to_left_visualizer.time.sleep')
     def test_visualize_right_to_left_horizontal(self, mock_sleep,
                                                 mock_os_system,
                                                 mock_get_terminal_size):
@@ -163,7 +163,6 @@ class TestVisualizes(unittest.TestCase):
         # Parameters for the visualizer
         rate = 44100
         alpha = 0.5
-        bar_count = 50
         window = np.hanning(chunk)
         smoothed_fft = np.zeros(chunk // 2)
 
@@ -172,7 +171,7 @@ class TestVisualizes(unittest.TestCase):
             try:
                 visualize_horizontal_right_to_left(
                     mock_stream, chunk, rate, alpha,
-                    bar_count, window, smoothed_fft)
+                    window, smoothed_fft, self.mock_stop_event)
             except StopIteration:
                 pass  # Handle StopIteration gracefully in test
 

@@ -13,11 +13,11 @@ import time
 
 
 def visualize_horizontal_right_to_left(
-        stream, chunk, rate, alpha, bar_count, window, smoothed_fft):
+        stream, chunk, rate, alpha, window, smoothed_fft, stop_event):
     # Initialize smoothed FFT with zeros
     smoothed_fft = np.zeros(chunk // 2 + 1)
 
-    while True:
+    while not stop_event.is_set():
         data = stream.read_data()
         if data is None:
             continue
