@@ -18,6 +18,13 @@ from audio_visualizer.horizontal_right_to_left_visualizer import (
     visualize_horizontal_right_to_left)
 
 
+@patch('audio_visualizer.vertical_visualizer.os.get_terminal_size')
+# Mock os.system to prevent clearing the screen
+@patch('audio_visualizer.vertical_visualizer.os.system')
+# Mock time.sleep to speed up the test
+@patch('audio_visualizer.vertical_visualizer.time.sleep')
+# Mock entire pynput module
+@patch('audio_visualizer.visualizer.keyboard', MagicMock())
 class TestVisualizes(unittest.TestCase):
     def setUp(self):
         # Create a mock stop event
@@ -26,11 +33,7 @@ class TestVisualizes(unittest.TestCase):
     """
     Test cases for visualization functions.
     """
-    @patch('audio_visualizer.vertical_visualizer.os.get_terminal_size')
-    # Mock os.system to prevent clearing the screen
-    @patch('audio_visualizer.vertical_visualizer.os.system')
-    # Mock time.sleep to speed up the test
-    @patch('audio_visualizer.vertical_visualizer.time.sleep')
+
     def test_visualize_vertical(self, mock_sleep,
                                 mock_os_system, mock_get_terminal_size):
         """
@@ -78,11 +81,6 @@ class TestVisualizes(unittest.TestCase):
         self.assertIn('█', output)
         self.assertGreater(len(output), 0)  # Check that there is some output
 
-    @patch('audio_visualizer.horizontal_left_to_right_visualizer.os.get_terminal_size')  # noqa: E501
-    # Mock os.system to prevent clearing the screen
-    @patch('audio_visualizer.horizontal_left_to_right_visualizer.os.system')
-    # Mock time.sleep to speed up the test
-    @patch('audio_visualizer.horizontal_left_to_right_visualizer.time.sleep')
     def test_visualize_horizontal_left_to_right(self, mock_sleep,
                                                 mock_os_system,
                                                 mock_get_terminal_size):
@@ -131,11 +129,6 @@ class TestVisualizes(unittest.TestCase):
         self.assertIn('█', output)
         self.assertGreater(len(output), 0)  # Check that there is some output
 
-    @patch('audio_visualizer.horizontal_right_to_left_visualizer.os.get_terminal_size')  # noqa: E501
-    # Mock os.system to prevent clearing the screen
-    @patch('audio_visualizer.horizontal_right_to_left_visualizer.os.system')
-    # Mock time.sleep to speed up the test
-    @patch('audio_visualizer.horizontal_right_to_left_visualizer.time.sleep')
     def test_visualize_right_to_left_horizontal(self, mock_sleep,
                                                 mock_os_system,
                                                 mock_get_terminal_size):
