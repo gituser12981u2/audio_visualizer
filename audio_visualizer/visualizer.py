@@ -14,7 +14,7 @@ from audio_visualizer.horizontal_left_to_right_visualizer import (
     visualize_horizontal_left_to_right)
 from audio_visualizer.horizontal_right_to_left_visualizer import (
     visualize_horizontal_right_to_left)
-
+import os
 
 class AudioVisualizer:
     """Audio Visualizer for terminal.
@@ -74,7 +74,13 @@ class AudioVisualizer:
                                                    self.bar_count, self.window,
                                                    self.smoothed_fft)
         except KeyboardInterrupt:
-            logging.info("Visualization stopped by user.")
+            # Terminal cleared using cls/ clear. Print statement processed after clearing terminal.
+            if os.name == 'nt':
+                os.system('cls')
+                print('Visualization stopped by user.')
+            else:
+                os.system('clear')
+                print('Visualization stopped by user.')
         except Exception as e:
             logging.error(f"An error occurred: {e}")
         finally:
