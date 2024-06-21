@@ -10,7 +10,7 @@ from audio_visualizer.horizontal_left_to_right_visualizer import (
     visualize_horizontal_left_to_right)
 from audio_visualizer.horizontal_right_to_left_visualizer import (
     visualize_horizontal_right_to_left)
-
+import os
 
 def clear_screen():
     """Clears the console screen."""
