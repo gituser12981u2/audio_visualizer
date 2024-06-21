@@ -5,17 +5,20 @@ Unit tests for vertical_visualizer, horizontal_left_to_right_visualizer,
 and horizontal_right_to_left_visualizer modules.
 """
 
+from audio_visualizer.horizontal_right_to_left_visualizer import (
+    visualize_horizontal_right_to_left)
+from audio_visualizer.horizontal_left_to_right_visualizer import (
+    visualize_horizontal_left_to_right)
+from audio_visualizer.vertical_visualizer import visualize_vertical
 import unittest
+import sys
 from unittest.mock import MagicMock, patch
 import numpy as np
 from threading import Event
 import io
 
-from audio_visualizer.vertical_visualizer import visualize_vertical
-from audio_visualizer.horizontal_left_to_right_visualizer import (
-    visualize_horizontal_left_to_right)
-from audio_visualizer.horizontal_right_to_left_visualizer import (
-    visualize_horizontal_right_to_left)
+sys.modules['pynput'] = MagicMock()
+sys.modules['pynput.keyboard'] = MagicMock()
 
 
 @patch('audio_visualizer.vertical_visualizer.os.get_terminal_size')
