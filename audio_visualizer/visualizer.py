@@ -18,6 +18,18 @@ def clear_screen():
 
 
 def get_visualization_function(mode):
+    """
+    Returns the visualization function based on the provided mode.
+
+    Args:
+        mode (str): The mode of visualization to retrieve.
+
+    Returns:
+        function: A function that corresponds to the visualization mode.
+
+    Raises:
+        ValueError: if an unsupported visualization mode is provided.
+    """
     if mode == 'vertical':
         return visualize_vertical
     elif mode == 'horizontal-ltr':
@@ -29,9 +41,30 @@ def get_visualization_function(mode):
 
 
 class AudioVisualizer:
-    """Class to manage audio visualization."""
+    """
+    A class to manage audio visualization.
+
+    Attributes:
+        mode (str): Current visualization mode.
+        alpha (float): Alpha parameter for visualization smoothing.
+        chunk (int): Number of audio samples per buffer.
+        rate (int): Sample rate (samples per second).
+        stream (AudioCapture): Audio stream for capturing audio data.
+        thread (Thread): Thread running the visualization process.
+        stop_event (Event): Event to signal the thread to stop.
+    """
 
     def __init__(self, mode='vertical', alpha=0.4, chunk=2048, rate=44100):
+        """
+        Initializes the AudioVisualizer object with default settings
+        for audio streaming.
+
+        Args:
+            mode (str, optional): The initial visualization mode.
+            alpha (float, optional): Smoothing factor for visualization.
+            chunk (int, optional): Number of audio samples per buffer.
+            rate (int, optional): Sampling rate of the audio in Hz.
+        """
         self.mode = mode
         self.alpha = alpha
         self.chunk = chunk
@@ -54,6 +87,13 @@ class AudioVisualizer:
         logging.info("Keyboard listener started")
 
     def on_key_press(self, key):
+        """
+        Handles key press events to change visualization modes based
+        on Ctrl combinations.
+
+        Args:
+            key (Key): The key that was pressed.
+        """
         # Check if the 'Ctrl' key is pressed
         if isinstance(key, keyboard.Key):
             if key == keyboard.Key.ctrl_l or key == keyboard.Key.ctrl_r:
@@ -69,12 +109,23 @@ class AudioVisualizer:
                     self.change_mode(new_mode)
 
     def on_key_release(self, key):
+        """
+        Handles key release events to manage the state of the Ctrl key.
+
+        Args:
+            key (Key): The key that was released.
+        """
         # Check if the 'Ctrl' key is released
         if key == keyboard.Key.ctrl_l or key == keyboard.Key.ctrl_r:
             self.ctrl_pressed = False
 
     def change_mode(self, new_mode):
-        """Change the mode of the visualizer and restart visualization"""
+        """
+        Change the mode of the visualizer and restart visualization.
+
+        Args:
+            new_mode (str): The new visualization mode to set.
+        """
         logging.debug(f"Attempting to change mode from {
                       self.mode} to {new_mode}")
         self.mode = new_mode

@@ -1,6 +1,4 @@
 """
-horizontal_right_to_left_visualizer.py
-
 This module visualizes audio data in a horizontal bar chart
 from right to left.
 """
@@ -14,6 +12,18 @@ import time
 
 def visualize_horizontal_right_to_left(
         stream, chunk, rate, alpha, window, smoothed_fft, stop_event):
+    """
+    Visualizes audio data in a horizontal right-to-left bar chart.
+
+    Args:
+        stream (AudioCapture): The audio stream to visualize.
+        chunk (int): Number of audio samples per buffer.
+        rate (int): Sample rate of the audio.
+        alpha (float): Smoothing factor for the visualization.
+        window (np.array): Window function to apply the audio data.
+        smoothed_fft (np.array): Array to store the smoothed FFT values.
+        stop_event (Event): Event to signal when teh visualization should stop.
+    """
     # Initialize smoothed FFT with zeros
     smoothed_fft = np.zeros(chunk // 2 + 1)
 

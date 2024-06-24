@@ -127,58 +127,6 @@ On Windows, audio routing can be tricky. If you want to visualize audio from you
 
 This will allow for the program to render the audio that is being outputted on the device as well as continue to have the user be able to hear the same audio.
 
-## Contributing
-
-1. Fork the repository.
-2. Create a new branch(`git checkout -b feature-branch`).
-3. Commit your changes(`git commit -am 'Add new feature'`)
-4. Push to the branch(`git push origin feature-branch`)..
-5. Create a new Pull Request.
-
-### Linting and Formatting
-
-Please ensure that any updates adhere to the project's style guidelines before committing.
-
-- Run flake8 to check for linting issues:
-```bash
-flake8 audio_visualizer tests audio_capture.py horizontal_visualizer.py vertical_visualizer.py visualizer.py
-```
-
-- Run autopep8 to format the code to flake8 standards
-    - Note that autopep8 doesn't work 100% so some manual formatting may be necessary
-
-```bash
-autopep8 --in-place --aggressive --aggressive audio_visualizer tests audio_capture.py horizontal_visualizer.py vertical_visualizer.py visualizer.py
-```
-
-One can also set up a pre-commit hook to automate these checks:
-
-1. Install pre-commit:
-```bash
-pip install pre-commit
-```
-
-2. Create a .pre-commit-config.yaml file with the following content:
-```yaml
-repos:
-  - repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v1.5.7
-    hooks:
-      - id: autopep8
-        args: [--aggressive, --aggressive]
-
-  - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.9.2
-    hooks:
-      - id: flake8
-```
-
-3. Install the pre-commit hooks:
-```bash
-pre-commit install
-```
-
-This will ensure that autopep8 and flake8 run automatically before each commit.
 
 ## License
 
