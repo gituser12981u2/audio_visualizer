@@ -54,7 +54,7 @@ class AudioVisualizer:
         stop_event (Event): Event to signal the thread to stop.
     """
 
-    def __init__(self, mode='vertical', alpha=0.4, chunk=2048, rate=44100):
+    def __init__(self, mode, alpha, chunk, rate, config=None):
         """
         Initializes the AudioVisualizer object with default settings
         for audio streaming.
@@ -64,60 +64,81 @@ class AudioVisualizer:
             alpha (float, optional): Smoothing factor for visualization.
             chunk (int, optional): Number of audio samples per buffer.
             rate (int, optional): Sampling rate of the audio in Hz.
+            config (dict): Configuration for key bindings and other settings.
         """
         self.mode = mode
         self.alpha = alpha
         self.chunk = chunk
         self.rate = rate
+        self.config = config or {
+            'modifier_key': 'ctrl',  # Default modifier key and default keys
+            'keys': {'j': 'vertical', 'h': 'horizontal-ltr',
+                     'l': 'horizontal-rtl'}
+        }
         self.stream = AudioCapture(
             chunk=self.chunk, rate=self.rate, channels=2)
         self.stream.start_stream()
         self.thread = None
         self.stop_event = Event()
+        self.modifier_pressed = False  # State flag for modifier key
         self.setup_hotkeys()
-        logging.info("Audio Visualizer initialized")
+        logging.info(
+            f"Audio Visualizer initialized with mode: {self.mode}, alpha: {
+                self.alpha}, chunk: {self.chunk}, rate: {self.rate}"
+        )
 
     def setup_hotkeys(self):
         """
         Sets up the keyboard listener
         for hotkeys to change visualization modes.
         """
-        listener = keyboard.Listener(on_press=self.on_key_press)
+        listener = keyboard.Listener(
+            on_press=self.on_key_press, on_release=self.on_key_release)
         listener.start()
         logging.info("Keyboard listener started")
 
     def on_key_press(self, key):
         """
         Handles key press events to change visualization modes based
-        on Ctrl combinations.
+        on on configured keybindings.
 
         Args:
             key (Key): The key that was pressed.
         """
-        # Check if the 'Ctrl' key is pressed
-        if isinstance(key, keyboard.Key):
-            if key == keyboard.Key.ctrl_l or key == keyboard.Key.ctrl_r:
-                self.ctrl_pressed = True
+        try:
+            if isinstance(key, keyboard.Key):
+                modifier_keys = [getattr(keyboard.Key,
+                                         f'{self.config["modifier_key"]}_l'),
+                                 getattr(keyboard.Key,
+                                         f'{self.config["modifier_key"]}_r')]
+                if key in modifier_keys:
+                    self.modifier_pressed = True
 
-        # Check for the specific character keys while 'Ctrl' is pressed
-        if isinstance(key, keyboard.KeyCode):
-            char = key.char
-            if self.ctrl_pressed and char in ['v', 'l', 'r']:
-                new_mode = {'v': 'vertical', 'l': 'horizontal-ltr',
-                            'r': 'horizontal-rtl'}.get(char)
-                if new_mode and new_mode != self.mode:
-                    self.change_mode(new_mode)
+            if isinstance(key, keyboard.KeyCode) and self.modifier_pressed:
+                if key.char in self.config['keys']:
+                    logging.debug(f"{key.char} is pressed")
+                    new_mode = self.config['keys'][key.char]
+                    if new_mode and new_mode != self.mode:
+                        self.change_mode(new_mode)
+        except Exception as e:
+            logging.error(f"Error handling key press: {e}")
 
     def on_key_release(self, key):
         """
-        Handles key release events to manage the state of the Ctrl key.
+        Manages the state of the Ctrl key upon its release.
 
         Args:
             key (Key): The key that was released.
         """
-        # Check if the 'Ctrl' key is released
-        if key == keyboard.Key.ctrl_l or key == keyboard.Key.ctrl_r:
-            self.ctrl_pressed = False
+        try:
+            modifier_keys = [getattr(keyboard.Key,
+                                     f'{self.config["modifier_key"]}_l'),
+                             getattr(keyboard.Key,
+                                     f'{self.config["modifier_key"]}_r')]
+            if key in modifier_keys:
+                self.modifier_pressed = False
+        except Exception as e:
+            logging.error(f"Error handling key release: {e}")
 
     def change_mode(self, new_mode):
         """
@@ -126,7 +147,7 @@ class AudioVisualizer:
         Args:
             new_mode (str): The new visualization mode to set.
         """
-        logging.debug(f"Attempting to change mode from {
+        logging.debug(f"Changing mode from {
                       self.mode} to {new_mode}")
         self.mode = new_mode
         self.restart_visualization()

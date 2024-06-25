@@ -93,15 +93,25 @@ audio-visualizer --mode horizontal-ltr
 
 **Note**: there are two horizontal modes. One that draws bars from left to right (ltr) and one that draws bars from right to left (rtl)
 
+### Configuration File
+
+Modify `config.lua` to change default settings and key bindings. This file controls various aspects of the Audio Visualizer's behavior, including the visual mode, hotkeys, and audio processing parameters.
+
+#### Config File Location
+
+- **Linux/macOS**: Place your `config.lua` in `~/.config/audio_visualizer/`. This is teh recommended location as it follwos the standard configuration directory structure on Unix-like systems.
+- **Windows**: Place your `config.lua` in `%APPDATA%\audio-visualizer\`. This location is recommended for Windows users as it aligns with the typical application data storage.
+
+If a `config.lua` file is not found in these locations, the program will attempt to load it from the directory where the `audio-visualizer` command is executed.
+
 ### Hotkey mode switcher
 
-Switch to a different view--mode--while already in a visualization.
+Switch visualization modes dynamically with configured hotkeys.
+For example, the default keybindings are:
 
-While running a mode, press **'ctrl+l'** to switch to horizontal ltr mode, **'ctrl+r'** to switch to horizontal rtl mode, or **'ctrl+v'** to switch to vertical mode.
-
--'ctrl+l': horizontal ltr mode
--'ctrl+r': horizontal rtl mode
--'ctrl+v': vertical mode
+-'ctrl+h': horizontal ltr mode
+-'ctrl+l': horizontal rtl mode
+-'ctrl+j': vertical mode
 
 ### Command Line Options
 
@@ -126,7 +136,6 @@ On Windows, audio routing can be tricky. If you want to visualize audio from you
 4. Route the audio through your headphones or speakers.
 
 This will allow for the program to render the audio that is being outputted on the device as well as continue to have the user be able to hear the same audio.
-
 
 ## License
 
