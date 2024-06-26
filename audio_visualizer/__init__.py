@@ -65,6 +65,10 @@ def load_config():
             'alpha': 0.4,
             'chunk_size': 2048,
             'sample_rate': 44100
+        },
+        'themes': {
+            'background_color': 'default',  # RGB for black
+            'bar_color': 'default'  # RGB for white
         }
     }
 
@@ -105,7 +109,8 @@ def main():
         alpha=args.alpha,
         chunk=args.chunk,
         rate=args.rate,
-        config=config['key_binds']
+        config=config['key_binds'],
+        theme=config['themes']
     )
     visualizer.start()
 
