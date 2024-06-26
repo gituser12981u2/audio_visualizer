@@ -54,7 +54,7 @@ class AudioVisualizer:
         stop_event (Event): Event to signal the thread to stop.
     """
 
-    def __init__(self, mode, alpha, chunk, rate, config=None):
+    def __init__(self, mode, alpha, chunk, rate, config=None, theme=None):
         """
         Initializes the AudioVisualizer object with default settings
         for audio streaming.
@@ -75,6 +75,7 @@ class AudioVisualizer:
             'keys': {'j': 'vertical', 'h': 'horizontal-ltr',
                      'l': 'horizontal-rtl'}
         }
+        self.theme = theme or None
         self.stream = AudioCapture(
             chunk=self.chunk, rate=self.rate, channels=2)
         self.stream.start_stream()
@@ -168,7 +169,7 @@ class AudioVisualizer:
             visualize = get_visualization_function(self.mode)
             visualize(self.stream, self.chunk, self.rate, self.alpha,
                       np.hamming(self.chunk), np.zeros(self.chunk // 2),
-                      self.stop_event)
+                      self.stop_event, self.theme)
         except Exception as e:
             logging.error(f"Error during visualization: {e}")
 

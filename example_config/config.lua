@@ -19,10 +19,12 @@ return {
         alpha = 0.4,  -- Smoothing factor for the Fast Fourier Transform (FFT).
         chunk_size = 2048,  -- Number of audio samples per buffer.
         sample_rate = 44100  -- Audio sampling rate in Hertz (samples per second).
+    },
+    themes = {
+        -- Theme settings for the visualization background and bar colors.
+        -- Specify colors in 'RGB' format separated by semicolons (e.g., '255;0;0' for red).
+        -- Use 'default' to utilize the terminal's default color settings.
+        background_color = 'default',  -- Background color of the visualization.
+        bar_color = 'default'  -- Color of the visualization bars.
     }
-    -- Future settings for theming
-    -- themes = {
-    --     background_color = 'black',
-    --     bar_color = 'white'
-    -- }
 }

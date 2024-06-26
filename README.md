@@ -6,6 +6,7 @@ A simple, janky, yet charming terminal-based audio visualizer written in Python.
 
 - Visualize audio data in vertical or horizontal bar charts.
 - Adjustable parameters such as smoothing factor, buffer size, sampling rate, and number of bars.
+- Theme support for customizing the visual output.
 - Works on Linux, macOS, and Windows.
 - Works best in VSC terminal, iterm2, kitty, and alacritty.
 
@@ -22,6 +23,7 @@ A simple, janky, yet charming terminal-based audio visualizer written in Python.
 ```bash
 sudo apt-get update
 ```
+
 ```bash
 sudo apt-get install -y portaudio19-dev
 ```
@@ -55,6 +57,7 @@ Download and install the PortAudio library from [here](https://files.portaudio.c
     ```bash
     python3 -m venv .venv
     ```
+
     ```bash
     source .venv/bin/activate  
     # On Windows, use '.venv\Scripts\activate'
@@ -65,6 +68,7 @@ Download and install the PortAudio library from [here](https://files.portaudio.c
     ```bash
     pip install -r requirements.txt
     ```
+
     ```bash
     pip install .
     ```
@@ -109,9 +113,16 @@ If a `config.lua` file is not found in these locations, the program will attempt
 Switch visualization modes dynamically with configured hotkeys.
 For example, the default keybindings are:
 
--'ctrl+h': horizontal ltr mode
--'ctrl+l': horizontal rtl mode
--'ctrl+j': vertical mode
+- 'ctrl+h': horizontal ltr mode
+- 'ctrl+l': horizontal rtl mode
+- 'ctrl+j': vertical mode
+
+### Themes
+
+Themes allow you to customize the visual appearance of the audio visualizer:
+
+- **background_color**: Set to a 'RGB' value like '255;0;0' for red, or 'default to use the terminal's default color.
+- **bar_color**: Set to a 'RGB' value or 'default' to use the terminal's default color.
 
 ### Command Line Options
 
@@ -142,6 +153,7 @@ This will allow for the program to render the audio that is being outputted on t
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Contributors
+
 Thank you to the follow people for their contributions to this project:
 
 -[@ohksith](https://github.com/ohksith) - Provided fix for the terminal to clean it self after visualization stopped
