@@ -6,6 +6,7 @@ A simple, janky, yet charming terminal-based audio visualizer written in Python.
 
 - Visualize audio data in vertical or horizontal bar charts.
 - Adjustable parameters such as smoothing factor, buffer size, sampling rate, and number of bars.
+- Theme support for customizing the visual output.
 - Works on Linux, macOS, and Windows.
 - Works best in VSC terminal, iterm2, kitty, and alacritty.
 
@@ -22,6 +23,7 @@ A simple, janky, yet charming terminal-based audio visualizer written in Python.
 ```bash
 sudo apt-get update
 ```
+
 ```bash
 sudo apt-get install -y portaudio19-dev
 ```
@@ -55,6 +57,7 @@ Download and install the PortAudio library from [here](https://files.portaudio.c
     ```bash
     python3 -m venv .venv
     ```
+
     ```bash
     source .venv/bin/activate  
     # On Windows, use '.venv\Scripts\activate'
@@ -65,6 +68,7 @@ Download and install the PortAudio library from [here](https://files.portaudio.c
     ```bash
     pip install -r requirements.txt
     ```
+
     ```bash
     pip install .
     ```
@@ -93,15 +97,32 @@ audio-visualizer --mode horizontal-ltr
 
 **Note**: there are two horizontal modes. One that draws bars from left to right (ltr) and one that draws bars from right to left (rtl)
 
+### Configuration File
+
+Modify `config.lua` to change default settings and key bindings. This file controls various aspects of the Audio Visualizer's behavior, including the visual mode, hotkeys, and audio processing parameters.
+
+#### Config File Location
+
+- **Linux/macOS**: Place your `config.lua` in `~/.config/audio_visualizer/`. This is teh recommended location as it follwos the standard configuration directory structure on Unix-like systems.
+- **Windows**: Place your `config.lua` in `%APPDATA%\audio-visualizer\`. This location is recommended for Windows users as it aligns with the typical application data storage.
+
+If a `config.lua` file is not found in these locations, the program will attempt to load it from the directory where the `audio-visualizer` command is executed.
+
 ### Hotkey mode switcher
 
-Switch to a different view--mode--while already in a visualization.
+Switch visualization modes dynamically with configured hotkeys.
+For example, the default keybindings are:
 
-While running a mode, press **'ctrl+l'** to switch to horizontal ltr mode, **'ctrl+r'** to switch to horizontal rtl mode, or **'ctrl+v'** to switch to vertical mode.
+- 'ctrl+h': horizontal ltr mode
+- 'ctrl+l': horizontal rtl mode
+- 'ctrl+j': vertical mode
 
--'ctrl+l': horizontal ltr mode
--'ctrl+r': horizontal rtl mode
--'ctrl+v': vertical mode
+### Themes
+
+Themes allow you to customize the visual appearance of the audio visualizer:
+
+- **background_color**: Set to a 'RGB' value like '255;0;0' for red, or 'default to use the terminal's default color.
+- **bar_color**: Set to a 'RGB' value or 'default' to use the terminal's default color.
 
 ### Command Line Options
 
@@ -127,64 +148,12 @@ On Windows, audio routing can be tricky. If you want to visualize audio from you
 
 This will allow for the program to render the audio that is being outputted on the device as well as continue to have the user be able to hear the same audio.
 
-## Contributing
-
-1. Fork the repository.
-2. Create a new branch(`git checkout -b feature-branch`).
-3. Commit your changes(`git commit -am 'Add new feature'`)
-4. Push to the branch(`git push origin feature-branch`)..
-5. Create a new Pull Request.
-
-### Linting and Formatting
-
-Please ensure that any updates adhere to the project's style guidelines before committing.
-
-- Run flake8 to check for linting issues:
-```bash
-flake8 audio_visualizer tests audio_capture.py horizontal_visualizer.py vertical_visualizer.py visualizer.py
-```
-
-- Run autopep8 to format the code to flake8 standards
-    - Note that autopep8 doesn't work 100% so some manual formatting may be necessary
-
-```bash
-autopep8 --in-place --aggressive --aggressive audio_visualizer tests audio_capture.py horizontal_visualizer.py vertical_visualizer.py visualizer.py
-```
-
-One can also set up a pre-commit hook to automate these checks:
-
-1. Install pre-commit:
-```bash
-pip install pre-commit
-```
-
-2. Create a .pre-commit-config.yaml file with the following content:
-```yaml
-repos:
-  - repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v1.5.7
-    hooks:
-      - id: autopep8
-        args: [--aggressive, --aggressive]
-
-  - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.9.2
-    hooks:
-      - id: flake8
-```
-
-3. Install the pre-commit hooks:
-```bash
-pre-commit install
-```
-
-This will ensure that autopep8 and flake8 run automatically before each commit.
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Contributors
+
 Thank you to the follow people for their contributions to this project:
 
 -[@ohksith](https://github.com/ohksith) - Provided fix for the terminal to clean it self after visualization stopped

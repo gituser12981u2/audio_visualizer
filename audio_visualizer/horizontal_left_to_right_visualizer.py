@@ -1,7 +1,6 @@
 """
-horizontal_left_to_right_visualizer.py
-
-This module visualizes audio data in a horizontal bar chart.
+This module visualizes audio data in a horizontal bar chart
+from left to right.
 """
 
 import numpy as np
@@ -12,7 +11,21 @@ import time
 
 
 def visualize_horizontal_left_to_right(
-        stream, chunk, rate, alpha, window, smoothed_fft, stop_event):
+    stream, chunk, rate, alpha, window, smoothed_fft,
+        stop_event, theme=None):
+    """
+    Visualizes audio data in a horizontal left-to-right bar chart.
+
+    Args:
+        stream (AudioCapture): The audio stream to visualize.
+        chunk (int): Number of audio samples per buffer.
+        rate (int): Sample rate of the audio.
+        alpha (float): Smoothing factor for the visualization.
+        window (np.array): Window function to apply the audio data.
+        smoothed_fft (np.array): Array to store the smoothed FFT values.
+        stop_event (Event): Event to signal when the visualization should stop
+        theme (dict, optional): Contains color settings.
+    """
     # Initialize smoothed FFT with zeros
     smoothed_fft = np.zeros(chunk // 2 + 1)
 
@@ -36,11 +49,29 @@ def visualize_horizontal_left_to_right(
         scaled_fft = np.int16((smoothed_fft / max_fft) * cols)
 
         frame_buffer = [' ' * cols for _ in range(rows)]
+
+        # Clear the terminal
+        os.system('cls' if os.name == 'nt' else 'clear')
+
+        if theme:
+            if 'background_color' in theme and (
+                    theme['background_color'] != 'default'):
+                bg_color = tuple(
+                    map(int, theme['background_color'].split(';')))
+                # Set background color
+                print(f"\033[48;2;{bg_color[0]};{
+                    bg_color[1]};{bg_color[2]}m", end='')
+
+            if 'bar_color' in theme and theme['bar_color'] != 'default':
+                bar_color = tuple(map(int, theme['bar_color'].split(';')))
+                # set bar color
+                print(f"\033[38;2;{
+                    bar_color[0]};{bar_color[1]};{bar_color[2]}m", end='')
+
         for row in range(min(rows, len(scaled_fft))):
             bar_width = scaled_fft[row]
             frame_buffer[row] = '█' * bar_width + ' ' * (cols - bar_width)
 
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print('\n'.join(frame_buffer), end='', flush=True)
+        print('\n'.join(frame_buffer), end='\033[0m', flush=True)
 
         time.sleep(0.1)  # control frame rate
