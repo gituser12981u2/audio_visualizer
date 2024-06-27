@@ -31,6 +31,9 @@ coverage.xml
 .hypothesis/
 debug.log
 
+# Performance profile
+init_profile.profile
+
 # PyCharm
 .idea/
 

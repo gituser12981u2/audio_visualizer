@@ -1,8 +1,9 @@
 return {
     key_binds = {
         -- The modifier key used for hotkeys. Possible values are 'ctrl', 'shift', 'alt'.
-        -- Note: On macOS, using 'shift or 'alt' can alter teh character keys.
+        -- Note: On macOS, using 'shift or 'alt' can alter the character keys.
         -- For example, 'shift' + 'l' becomes 'L', and 'alt' + 'l' might result in a non-alphanumeric character '¬'.
+        -- 'alt' works best on windows.
         -- Users should adjust the 'keys' bindings accordingly if using 'shift' or 'alt'.
         modifier_key = 'ctrl',
 
