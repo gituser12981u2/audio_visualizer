@@ -6,13 +6,32 @@ import os
 from sys import platform
 from lupa import LuaRuntime
 
+# Clear existing handlers
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s',
-                    handlers=[
-                        logging.FileHandler("debug.log"),
-                    ])
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename='debug.log',
+    filemode='a'  # Append mode
+)
+
+# Create a console handler to log ERROR
+# and higher level messages to the console
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.ERROR)
+console_formatter = logging.Formatter(
+    '%(asctime)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(console_formatter)
+
+# Get the root logger and add the console handler
+logger = logging.getLogger()
+logger.addHandler(console_handler)
+
+# Disable propagation for the logger to prevent duplicate logging in console
+logger.propagate = False
 
 
 def load_config():
@@ -110,7 +129,8 @@ def main():
         chunk=args.chunk,
         rate=args.rate,
         config=config['key_binds'],
-        theme=config['themes']
+        theme=config['themes'],
+        audio_source=config['settings']['audio_source']
     )
     visualizer.start()
 

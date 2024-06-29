@@ -54,7 +54,9 @@ class AudioVisualizer:
         stop_event (Event): Event to signal the thread to stop.
     """
 
-    def __init__(self, mode, alpha, chunk, rate, config=None, theme=None):
+    def __init__(
+        self, mode, alpha, chunk, rate,
+            config=None, theme=None, audio_source=None):
         """
         Initializes the AudioVisualizer object with default settings
         for audio streaming.
@@ -76,8 +78,10 @@ class AudioVisualizer:
                      'l': 'horizontal-rtl'}
         }
         self.theme = theme or None
+        self.device_name = audio_source or None
         self.stream = AudioCapture(
-            chunk=self.chunk, rate=self.rate, channels=2)
+            chunk=self.chunk, rate=self.rate, channels=2,
+            device_name=self.device_name)
         self.stream.start_stream()
         self.thread = None
         self.stop_event = Event()
