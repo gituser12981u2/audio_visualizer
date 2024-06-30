@@ -24,9 +24,9 @@ sys.modules['pynput.keyboard'] = MagicMock()
 
 
 # Mocking os.system to prevent clearing the screen
-@ patch('os.system')
+@patch('os.system')
 # Mocking os.get_terminal_size to control terminal size
-@ patch('os.get_terminal_size', return_value=(24, 80))
+@patch('os.get_terminal_size', return_value=(24, 80))
 class TestVisualizations(unittest.TestCase):
     def setUp(self):
         # Create a mock stop event
