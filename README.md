@@ -73,6 +73,16 @@ Download and install the PortAudio library from [here](https://files.portaudio.c
     pip install .
     ```
 
+### Optional GPU Acceleration
+
+If your system has a compatible Nvidia or AMD GPU, you can enable GPU acceleration by install an additional dependency:
+
+pip install audio_visualizer[gpu]
+
+**Note**: GPU acceleration is not recommended if your system supports Apple's AMX or uses an M-series chip, as native operations may be more efficient.
+
+Then follow these [instructions](https://docs.cupy.dev/en/stable/install.html#using-cupy-on-amd-gpu-experimental) to install the CUDA--for Nvidia--or ROCm--for AMD--toolkit.
+
 ## Usage
 
 ### Running the Visualizer

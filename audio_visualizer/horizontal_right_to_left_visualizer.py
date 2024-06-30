@@ -6,6 +6,7 @@ from right to left.
 import numpy as np
 import os
 import time
+import logging
 
 # NOTE rows are the width and cols are the height for os.get_terminal_size
 
@@ -26,6 +27,23 @@ def visualize_horizontal_right_to_left(
         stop_event (Event): Event to signal when the visualization should stop.
         theme (dict, optional): Contains color settings.
     """
+
+    # Try to import CuPy. If it's not available or no GPU is detected,
+    # fall back to NumPy.
+    try:
+        import cupy as xp  # type: ignore
+        if xp.cuda.runtime.getDeviceCount() > 0:
+            logging.info("Using CuPy for GPU acceleration.")
+        else:
+            import numpy as xp
+            logging.info(
+                "No GPU with CUDA cores detected. Using NumPy instead of CuPy."
+            )
+    except ImportError:
+        import numpy as xp
+        logging.info(
+            "No GPU with CUDA cores detected. Using NumPy instead of CuPy.")
+
     # Initialize smoothed FFT with zeros
     smoothed_fft = np.zeros(chunk // 2 + 1)
 

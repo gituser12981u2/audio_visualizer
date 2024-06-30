@@ -24,15 +24,17 @@ setup(
         "pynput==1.7.7",  # Monitor and control user input devices
         "six==1.16.0"  # Python 2 and 3 compatibility utilities
     ],
-    # Additional dependencies for macOS platform
     extras_require={
+        # Additional dependencies for macOS platform
         ':sys_platform=="darwin"': [
             "pyobjc-core==10.3.1",  # Objective-C bridge
             "pyobjc-framework-ApplicationServices==10.3.1",
             "pyobjc-framework-Cocoa==10.3.1",
             "pyobjc-framework-CoreText==10.3.1",
             "pyobjc-framework-Quartz==10.3.1",
-        ]
+        ],
+        # Dependencies only for CUDA or ROCm enabled GPU's
+        'gpu': ['cupy==13.2.0']
     },
     # Defines the entry point for the console script.
     entry_points={
