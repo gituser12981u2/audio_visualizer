@@ -5,6 +5,7 @@ This module visualizes audio data in a vertical bar chart.
 import numpy as np
 import os
 import time
+import logging
 
 # NOTE rows are the width and cols are the height for os.get_terminal_size
 
@@ -25,6 +26,23 @@ def visualize_vertical(
         stop_event (Event): Event to signal when the visualization should stop.
         theme (dict, optional): Contains color settings.
     """
+
+    # Try to import CuPy. If it's not available or no GPU is detected,
+    # fall back to NumPy.
+    try:
+        import cupy as xp  # type: ignore
+        if xp.cuda.runtime.getDeviceCount() > 0:
+            logging.info("Using CuPy for GPU acceleration.")
+        else:
+            import numpy as xp
+            logging.info(
+                "No GPU with CUDA cores detected. Using NumPy instead of CuPy."
+            )
+    except ImportError:
+        import numpy as xp
+        logging.info(
+            "No GPU with CUDA cores detected. Using NumPy instead of CuPy.")
+
     # Initialize smoothed FFT with zeros
     smoothed_fft = np.zeros(chunk // 2 + 1)
 
@@ -77,7 +95,8 @@ def visualize_vertical(
 
         time.sleep(0.1)  # control frame rate
 
-# Old logic
+
+"""Old logic"""
 # def visualize_vertical(
 #         stream, chunk, rate, alpha, bar_count, window, smoothed_fft):
 #     """

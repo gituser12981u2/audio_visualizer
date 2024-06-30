@@ -63,15 +63,23 @@ Download and install the PortAudio library from [here](https://files.portaudio.c
     # On Windows, use '.venv\Scripts\activate'
     ```
 
-3. Install the dependencies:
-
-    ```bash
-    pip install -r requirements.txt
-    ```
+3. Install the package:
 
     ```bash
     pip install .
     ```
+
+### Optional GPU Acceleration
+
+If your system has a compatible Nvidia or AMD GPU, you can enable GPU acceleration by installing an additional dependency:
+
+```bash
+pip install .[gpu]
+```
+
+**Note**: GPU acceleration is not recommended if your system supports AMX or uses an Apple M-series chip, as native operations may be more efficient.
+
+Then follow these [instructions](https://docs.cupy.dev/en/stable/install.html#using-cupy-on-amd-gpu-experimental) to install the CUDA--for Nvidia--or ROCm--for AMD--toolkit.
 
 ## Usage
 
