@@ -3,16 +3,36 @@ import argparse
 import logging
 import time
 import os
+import sys
 from sys import platform
 from lupa import LuaRuntime
 
+# Clear existing handlers
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s',
-                    handlers=[
-                        logging.FileHandler("debug.log"),
-                    ])
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename='debug.log',
+    filemode='a'  # Append mode
+)
+
+# Create a console handler to log ERROR
+# and higher level messages to the console
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.ERROR)
+console_formatter = logging.Formatter(
+    '%(asctime)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(console_formatter)
+
+# Get the root logger and add the console handler
+logger = logging.getLogger()
+logger.addHandler(console_handler)
+
+# Disable propagation for the logger to prevent duplicate logging in console
+logger.propagate = False
 
 
 def load_config():
@@ -51,13 +71,16 @@ def load_config():
     # If no config file is found, log the error and return default settings
     logging.warning(f"No configuration file found in expected locations: {
                     paths}. Using default settings.")
+
+    # Alt works better for windows and ctrl works better for unix based
+    default_modifier = 'alt' if sys.platform == 'win32' else 'ctrl'
     return {
         'key_binds': {
-            'modifier_key': 'ctrl',
+            'modifier_key': default_modifier,
             'keys': {
-                'v': 'vertical',
-                'l': 'horizontal-ltr',
-                'r': 'horizontal-rtl'
+                'j': 'vertical',
+                'h': 'horizontal-ltr',
+                'l': 'horizontal-rtl'
             }
         },
         'settings': {
@@ -65,10 +88,6 @@ def load_config():
             'alpha': 0.4,
             'chunk_size': 2048,
             'sample_rate': 44100
-        },
-        'themes': {
-            'background_color': 'default',  # RGB for black
-            'bar_color': 'default'  # RGB for white
         }
     }
 
@@ -109,8 +128,9 @@ def main():
         alpha=args.alpha,
         chunk=args.chunk,
         rate=args.rate,
-        config=config['key_binds'],
-        theme=config['themes']
+        key_binds=config['key_binds'],
+        theme=config['themes'],
+        audio_source=config['settings']['audio_source']
     )
     visualizer.start()
 

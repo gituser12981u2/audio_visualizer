@@ -1,0 +1,2 @@
+# Only install if the CUDA or ROCm toolkits are installed on the system
+cupy==13.2.0

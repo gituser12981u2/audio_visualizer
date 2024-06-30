@@ -20,6 +20,7 @@ return {
         alpha = 0.4,  -- Smoothing factor for the Fast Fourier Transform (FFT).
         chunk_size = 2048,  -- Number of audio samples per buffer.
         sample_rate = 44100  -- Audio sampling rate in Hertz (samples per second).
+        audio_source = 'Audio Device Name',  -- Customize this with any Audio Device name. This can be deleted if you want the program to choose
     },
     themes = {
         -- Theme settings for the visualization background and bar colors.
