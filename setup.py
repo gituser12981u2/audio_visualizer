@@ -16,6 +16,7 @@ setup(
     install_requires=[
         "autopep8==2.2.0",
         "flake8==7.0.0",
+        "lupa==2.2",
         "mccabe==0.7.0",
         "numpy==1.26.4",
         "PyAudio==0.2.14",  # Handles audio operations
