@@ -1,23 +1,40 @@
 from audio_visualizer.visualizer import AudioVisualizer
 import argparse
 import logging
+import logging.handlers
 import time
 import os
 import sys
 from sys import platform
 from lupa import LuaRuntime
 
+
+# Define a function to determine the appropriate log file path
+def get_log_path():
+    if platform == "win32":  # Windows
+        return os.path.join(os.getenv("APPDATA"), "audio_visualizer",
+                            "debug.log")
+    elif platform in ("linux", "linux2", "darwin"):  # Unix and macOS
+        return os.path.join(os.getenv("HOME"), ".config", "audio_visualizer",
+                            "debug.log")
+    else:
+        return "debug.log"  # Default to current directory if unknown platform
+
+
+# Configure logging
+log_file_path = get_log_path()
+
 # Clear existing handlers
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
 
-# Configure logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    filename='debug.log',
-    filemode='a'  # Append mode
-)
+# Setup log rotation
+logger = logging.getLogger()
+handler = logging.handlers.RotatingFileHandler(
+    log_file_path, maxBytes=1048576, backupCount=5)  # 1 MB
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 # Create a console handler to log ERROR
 # and higher level messages to the console
@@ -28,8 +45,8 @@ console_formatter = logging.Formatter(
 console_handler.setFormatter(console_formatter)
 
 # Get the root logger and add the console handler
-logger = logging.getLogger()
 logger.addHandler(console_handler)
+logger.setLevel(logging.DEBUG)
 
 # Disable propagation for the logger to prevent duplicate logging in console
 logger.propagate = False
@@ -70,7 +87,7 @@ def load_config():
 
     # If no config file is found, log the error and return default settings
     logging.warning(f"No configuration file found in expected locations: {
-                    paths}. Using default settings.")
+        paths}. Using default settings.")
 
     # Alt works better for windows and ctrl works better for unix based
     default_modifier = 'alt' if sys.platform == 'win32' else 'ctrl'
