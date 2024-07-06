@@ -11,3 +11,4 @@ exclude .vscode
 exclude .gitignore
 exclude CONTRIBUTING.md
 exclude debug.log
+exclude images/*
