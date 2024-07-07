@@ -1,10 +1,16 @@
+import sys
+
+# Check if the --version flag is used and handle it directly
+if '--version' in sys.argv:
+    print("audio_visualizer 1.0.0")
+    sys.exit(0)
+
 from audio_visualizer.visualizer import AudioVisualizer
 import argparse
 import logging
 import logging.handlers
 import time
 import os
-import sys
 from sys import platform
 from lupa import LuaRuntime
 
@@ -142,6 +148,12 @@ def main():
         type=int,
         default=config['settings']['sample_rate'],
         help="Sampling rate; default is 44100",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="audio_visualizer 1.0.0",
+        help="Show program's version number and exit."
     )
     args = parser.parse_args()
 
