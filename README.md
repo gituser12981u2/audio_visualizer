@@ -1,5 +1,7 @@
 # Audio Visualizer
 
+![Visualizer Demo](/lib/output.gif)
+
 A simple, janky, yet charming terminal-based audio visualizer written in Python. It can visualize audio data from a microphone or any other audio input device.
 
 See `/image_gallery` to see the program in action.
@@ -13,10 +15,6 @@ See `/image_gallery` to see the program in action.
 - Works best in VSC terminal, kitty, and alacritty.
 
 ## Installation
-
-### Prerequisites
-
-- Python 3.10 or later
 
 ### Install an audio loopback library
 
@@ -136,7 +134,7 @@ Modify `config.lua` to change default settings and key bindings. This file contr
 
 #### Config File Location
 
-- **Linux/macOS**: Place your `config.lua` in `~/.config/audio_visualizer/`. This is teh recommended location as it follwos the standard configuration directory structure on Unix-like systems.
+- **Linux/macOS**: Place your `config.lua` in `~/.config/audio_visualizer/`. This is the recommended location as it follows the standard configuration directory structure on Unix-like systems.
 - **Windows**: Place your `config.lua` in `%APPDATA%\audio-visualizer\`. This location is recommended for Windows users as it aligns with the typical application data storage.
 
 If a `config.lua` file is not found in these locations, the program will attempt to load it from the directory where the `audio-visualizer` command is executed.
@@ -175,6 +173,8 @@ audio-visualizer --mode horizontal-rtl --alpha 0.3 --chunk 1024 --rate 48000
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Contributors
+
+This project is inspired by cava.
 
 Thank you to the follow people for their contributions to this project:
 
