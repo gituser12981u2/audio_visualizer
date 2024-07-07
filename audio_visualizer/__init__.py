@@ -12,13 +12,18 @@ from lupa import LuaRuntime
 # Define a function to determine the appropriate log file path
 def get_log_path():
     if platform == "win32":  # Windows
-        return os.path.join(os.getenv("APPDATA"), "audio_visualizer",
-                            "debug.log")
+        log_dir = os.path.join(os.getenv("APPDATA"), "audio_visualizer")
     elif platform in ("linux", "linux2", "darwin"):  # Unix and macOS
-        return os.path.join(os.getenv("HOME"), ".config", "audio_visualizer",
-                            "debug.log")
+        log_dir = os.path.join(
+            os.getenv("HOME"), ".config", "audio_visualizer")
     else:
-        return "debug.log"  # Default to current directory if unknown platform
+        # Default to current directory if unknown platform
+        log_dir = os.getcwd()
+
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)  # Create the directory if it does not exist
+
+    return os.path.join(log_dir, "debug.log")
 
 
 # Configure logging
