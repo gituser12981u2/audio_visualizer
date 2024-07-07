@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="audio_visualizer",
-    version="1.0.0",
+    version="1.0.1",
     packages=find_packages(exclude=["tests", "tests.*"]),
     # List of dependencies installed via pip install -e .[dev]
     install_requires=[

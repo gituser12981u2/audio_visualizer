@@ -2,7 +2,7 @@ import sys
 
 # Check if the --version flag is used and handle it directly
 if '--version' in sys.argv:
-    print("audio_visualizer 1.0.0")
+    print("audio_visualizer 1.0.1")
     sys.exit(0)
 
 from audio_visualizer.visualizer import AudioVisualizer
@@ -152,7 +152,7 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version="audio_visualizer 1.0.0",
+        version="audio_visualizer 1.0.1",
         help="Show program's version number and exit."
     )
     args = parser.parse_args()
