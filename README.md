@@ -1,6 +1,10 @@
 # Audio Visualizer
 
+![Visualizer Demo](/lib/output.gif)
+
 A simple, janky, yet charming terminal-based audio visualizer written in Python. It can visualize audio data from a microphone or any other audio input device.
+
+See `/image_gallery` to see the program in action.
 
 ## Features
 
@@ -8,21 +12,13 @@ A simple, janky, yet charming terminal-based audio visualizer written in Python.
 - Adjustable parameters such as smoothing factor, buffer size, sampling rate, and number of bars.
 - Theme support for customizing the visual output.
 - Works on Linux, macOS, and Windows.
-- Works best in VSC terminal, iterm2, kitty, and alacritty.
+- Works best in VSC terminal, kitty, and alacritty.
 
 ## Installation
 
-### Prerequisites
-
-- Python 3.6 or later
-
-### Install the PortAudio Library
+### Install an audio loopback library
 
 #### Linux
-
-```bash
-sudo apt-get update
-```
 
 ```bash
 sudo apt-get install -y portaudio19-dev
@@ -42,9 +38,28 @@ brew install blackhole-2ch
 
 #### Windows
 
-Download and install the PortAudio library from [here](https://files.portaudio.com/download.html)
+On Windows, audio routing can be tricky. If you want to visualize audio from your speakers or headphones instead of just the microphone, you will need to use a virtual audio cable. Follow these steps:
 
-## Install the Python Package
+1. Download and install a virtual audio cable from [VB-Audio](<https://vb-audio.com/Cable/>)
+2. Set your playback device to the virtual audio cable.
+3. In your recording devices, set the virtual audio cable as the default recording device.
+4. Route the audio through your headphones or speakers.
+
+This will allow for the program to render the audio that is being outputted on the device as well as continue to have the user be able to hear the same audio.
+
+### Install audio_visualizer
+
+#### Homebrew (macOS/linux)
+
+```bash
+brew install audio_visualizer
+```
+
+#### Other package managers
+
+Will add to other package managers (like winget, AUR, etc) if asked.
+
+### Install the Python Package via Source code
 
 1. Clone the repository:
 
@@ -73,13 +88,21 @@ Download and install the PortAudio library from [here](https://files.portaudio.c
 
 If your system has a compatible Nvidia or AMD GPU, you can enable GPU acceleration by installing an additional dependency:
 
+#### For source code
+
 ```bash
 pip install .[gpu]
 ```
 
-**Note**: GPU acceleration is not recommended if your system supports AMX or uses an Apple M-series chip, as native operations may be more efficient.
+#### For install
 
-Then follow these [instructions](https://docs.cupy.dev/en/stable/install.html#using-cupy-on-amd-gpu-experimental) to install the CUDA--for Nvidia--or ROCm--for AMD--toolkit.
+```bash
+<package manager install> audio_visualizer --with-gpu
+```
+
+**Note**: GPU acceleration is not recommended if your system supports AMX, as native operations are more efficient for this program.
+
+Then follow these [instructions](https://docs.cupy.dev/en/stable/install.html#using-cupy-on-amd-gpu-experimental) to install the CUDA––for Nvidia––or ROCm––for AMD––toolkit.
 
 ## Usage
 
@@ -111,7 +134,7 @@ Modify `config.lua` to change default settings and key bindings. This file contr
 
 #### Config File Location
 
-- **Linux/macOS**: Place your `config.lua` in `~/.config/audio_visualizer/`. This is teh recommended location as it follwos the standard configuration directory structure on Unix-like systems.
+- **Linux/macOS**: Place your `config.lua` in `~/.config/audio_visualizer/`. This is the recommended location as it follows the standard configuration directory structure on Unix-like systems.
 - **Windows**: Place your `config.lua` in `%APPDATA%\audio-visualizer\`. This location is recommended for Windows users as it aligns with the typical application data storage.
 
 If a `config.lua` file is not found in these locations, the program will attempt to load it from the directory where the `audio-visualizer` command is executed.
@@ -145,22 +168,13 @@ Example:
 audio-visualizer --mode horizontal-rtl --alpha 0.3 --chunk 1024 --rate 48000
 ```
 
-## Windows Specific Instructions
-
-On Windows, audio routing can be tricky. If you want to visualize audio from your speakers or headphones instead of just the microphone, you will need to use a virtual audio cable. Follow these steps:
-
-1. Download and install a virtual audio cable from [VB-Audio](<https://vb-audio.com/Cable/>)
-2. Set your playback device to the virtual audio cable.
-3. In your recording devices, set the virtual audio cable as the default recording device.
-4. Route the audio through your headphones or speakers.
-
-This will allow for the program to render the audio that is being outputted on the device as well as continue to have the user be able to hear the same audio.
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Contributors
+
+This project is inspired by cava.
 
 Thank you to the follow people for their contributions to this project:
 
